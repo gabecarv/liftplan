@@ -598,6 +598,69 @@ function adoptNearby(n){
 }
 const fmtKm=km=>km<1?`${Math.round(km*1000)} m`:`${(km*0.621371).toFixed(1)} mi`;
 
+
+// ---------- Equipment scan (camera + on-device OCR) ----------
+// Reads brand and weight units off plates, stacks and machine labels. OCR runs in the browser (Tesseract.js, loaded on first use);
+// nothing is uploaded. Works on the hosted app; the Claude preview blocks the OCR download, so it degrades to manual entry.
+const BRANDS=['Hammer Strength','Life Fitness','Technogym','Rogue','Eleiko','Cybex','Precor','Matrix','Nautilus','Hoist','Star Trac','Prime','Arsenal Strength','Panatta','Gym80','Atlantis','Body-Solid','York','Ivanko','Rep Fitness','Titan','Concept2','Peloton','Keiser','Freemotion','BodyMasters','Icarian','Legend Fitness','Sorinex','Watson','Nautilus','Iron Grip','Troy'];
+let _ocr=null;
+async function getOCR(){
+  if(_ocr) return _ocr;
+  if(!window.Tesseract){ await new Promise((res,rej)=>{ const sc=document.createElement('script'); sc.src='https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js'; sc.onload=res; sc.onerror=()=>rej(new Error('ocr-load')); document.head.appendChild(sc); }); }
+  _ocr=await Tesseract.createWorker('eng',1,{ logger:()=>{} }); return _ocr;
+}
+function parseScan(text){
+  const t=text.replace(/\s+/g,' ');
+  const low=t.toLowerCase();
+  const kgHits=(low.match(/\b(kg|kgs|kilo|kilos|kilogram)\b/g)||[]).length + (low.match(/\d\s?kg/g)||[]).length;
+  const lbHits=(low.match(/\b(lb|lbs|pound|pounds)\b/g)||[]).length + (low.match(/\d\s?lb/g)||[]).length;
+  const nums=[...new Set((t.match(/\b\d{1,3}(?:\.\d)?\b/g)||[]).map(Number).filter(n=>n>=2&&n<=400))];
+  // Plate heuristics when no unit printed: 20/15/10/5/2.5/1.25 → kg; 45/35/25/10/5/2.5 → lb
+  const kgPlates=[1.25,2.5,5,10,15,20,25].filter(x=>nums.includes(x)).length, lbPlates=[2.5,5,10,25,35,45].filter(x=>nums.includes(x)).length;
+  let unit=null, why='';
+  if(kgHits>lbHits&&kgHits) { unit='kg'; why='"kg" printed'; }
+  else if(lbHits>kgHits&&lbHits) { unit='lbs'; why='"lb" printed'; }
+  else if(nums.includes(45)||nums.includes(35)) { unit='lbs'; why='45/35 plates'; }
+  else if((nums.includes(20)&&nums.includes(15))||nums.includes(1.25)) { unit='kg'; why='20/15 or 1.25 plates'; }
+  // a plain 10/20/30… stack is ambiguous — leave it for the user to confirm
+  const brand=BRANDS.find(b=>low.includes(b.toLowerCase()))||null;
+  // Stack increments: sorted distinct numbers with a common step hint
+  const sorted=nums.slice().sort((a,b)=>a-b); let step=null; if(sorted.length>=4){ const d=[]; for(let i=1;i<sorted.length;i++) d.push(+(sorted[i]-sorted[i-1]).toFixed(2)); const mode=d.sort((a,b)=>d.filter(x=>x===b).length-d.filter(x=>x===a).length)[0]; if(mode>0&&mode<=25) step=mode; }
+  return {unit, why, brand, nums:sorted, step, raw:t.slice(0,300)};
+}
+/** ctx: {gymId, equipType?, exId?, onDone?} */
+function scanSheet(ctx){
+  const g=ctx.gymId?DB.gyms[ctx.gymId]:currentGym(); const ex=ctx.exId?DB.exercises[ctx.exId]:null; const types=ex?reqFor(ex):(ctx.equipType?[ctx.equipType]:[]);
+  openSheet('Scan Equipment', `
+    <div class="grp"><div class="inset"><label class="cell tap btn-cell" style="min-height:64px;font-size:17px">📷 Take a photo of the label or plates<input type="file" id="scanFile" accept="image/*" capture="environment" hidden></label></div>
+      <div class="foot">Aim at the weight stack numbers, a plate face, or the manufacturer badge. Reads brand and whether it's marked in kg or lb. The photo stays on your phone.</div></div>
+    <div id="scanOut"></div>
+    <div class="grp"><h2>Or set it by hand</h2><div class="inset"><div class="field"><label>Brand</label><input type="text" id="mBrand" placeholder="e.g. Hammer Strength"></div>
+      <div class="field"><label>Marked in</label><span style="flex:1"></span><div class="seg" style="width:150px"><button class="on" data-u="unknown">?</button><button data-u="lbs">lb</button><button data-u="kg">kg</button></div></div></div></div>
+    ${types.length?`<div class="foot">Applies to: ${esc(types.join(', '))}${g?' at '+esc(g.name):''}</div>`:''}`, h=>{
+    let unit='unknown'; h.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{ unit=b.dataset.u; h.querySelectorAll('[data-u]').forEach(x=>x.classList.toggle('on',x===b)); });
+    const out=h.querySelector('#scanOut');
+    const apply=(res)=>{ const brand=(h.querySelector('#mBrand').value||res?.brand||'').trim(); const u=res?.unit||(unit!=='unknown'?unit:null);
+      if(g){ g.equipment??={}; for(const t of types){ upsertEq(g,t,'explicit'); const r=g.equipment[t]; if(brand) r.brand=brand; if(u) r.unit=u; } if(!types.length){ if(u) g.unit=u; if(brand) g.brandNote=brand; } }
+      save(); closeSheet(); toast(`${brand||'Equipment'}${u?' · marked in '+u:''} saved`); ctx.onDone?.(u,brand); render(); };
+    h.querySelector('#shDone').onclick=()=>apply(null);
+    h.querySelector('#scanFile').onchange=async ev=>{ const f=ev.target.files[0]; if(!f) return;
+      out.innerHTML=`<div class="banner">Reading the photo… first scan downloads the reader (~4 MB) once.</div>`;
+      try{ const bmp=await createImageBitmap(f); const sc=Math.min(1,1400/Math.max(bmp.width,bmp.height)); const c=document.createElement('canvas'); c.width=bmp.width*sc; c.height=bmp.height*sc; const x=c.getContext('2d'); x.drawImage(bmp,0,0,c.width,c.height);
+        const w=await getOCR(); const {data}=await w.recognize(c); const res=parseScan(data.text||'');
+        out.innerHTML=`<div class="grp"><h2>Detected</h2><div class="inset"><div class="kv"><b>Brand</b><span>${res.brand?esc(res.brand):'<span class="muted">not recognized</span>'}</span><b>Units</b><span>${res.unit?`<b>${res.unit}</b> <span class="muted small">(${esc(res.why)})</span>`:'<span class="muted">not visible</span>'}</span>${res.step?`<b>Stack step</b><span>${res.step} ${res.unit||''}</span>`:''}${res.nums.length?`<b>Numbers read</b><span class="mono small">${res.nums.slice(0,14).join(' ')}</span>`:''}</div></div>
+          <div class="foot">${res.raw?'Text seen: “'+esc(res.raw.slice(0,120))+'”':'No text found — try closer, with the label flat to the camera.'}</div></div>
+          <button class="big" id="scanApply" ${res.unit||res.brand?'':'disabled'}>Save ${res.brand?esc(res.brand)+' ':''}${res.unit?'· '+res.unit:''}</button>`;
+        if(res.brand) h.querySelector('#mBrand').value=res.brand; if(res.unit){ unit=res.unit; h.querySelectorAll('[data-u]').forEach(x=>x.classList.toggle('on',x.dataset.u===res.unit)); }
+        h.querySelector('#scanApply').onclick=()=>apply(res);
+      }catch(e){ out.innerHTML=`<div class="banner" style="background:var(--fill);color:var(--sec)">${e.message==='ocr-load'?'The text reader couldn’t load here (needs the hosted app and a connection the first time).':'Couldn’t read that photo.'} Set it by hand below.</div>`; } };
+  }, {done:'Save'});
+}
+const KG=0.45359237;
+function eqUnitFor(gym, exId){ if(!gym) return null; const ex=DB.exercises[exId]; if(!ex) return null; for(const t of reqFor(ex)){ const r=gymEq(gym,t); if(r?.unit) return r.unit; } return gym.unit||null; }
+/** Stored weights are always in the user's unit; these convert for display/entry in the unit the machine is marked in. */
+const showIn=(stored,eu)=>!stored?'':eu===DB.settings.unit?stored:+(eu==='kg'?stored*KG:stored/KG).toFixed(1);
+
 // ---------- Exercise lookup ----------
 const norm = s => s.toLowerCase().replace(/-/g,' ').replace(/\s+/g,' ').trim();
 function findEx(name){
@@ -759,14 +822,16 @@ function gymSheet(id){
   openSheet(g.name, `
     <div class="grp"><div class="inset"><div class="cell"><div class="ico-g">📍</div><div class="body"><div class="t">${esc(g.name)}</div><div class="s">${esc(g.address||g.chain||'No address')}</div></div></div>${cur?'':`<div class="cell tap btn-cell" id="gSetCur">Set as My Gym</div>`}</div></div>
     ${checks.length?`<div class="grp"><h2>Program check</h2><div class="inset">${checks.map(({r,miss})=>`<div class="cell"><span class="dot" style="background:${r.color}"></span><div class="body"><div class="t">${esc(r.name)}</div><div class="s" style="white-space:normal">${miss.map(m=>`${esc(DB.exercises[m.e.ex]?.name)} needs ${esc(m.miss.join(', '))}`).join(' · ')}</div></div></div>`).join('')}</div><div class="foot">Unconfirmed equipment. Start the routine here and tap Swap to pick an alternative, or confirm the equipment below.</div></div>`:''}
-    <div class="grp"><h2>Equipment · ${known}</h2>${EQ_CATS.filter(c=>byCat[c]).map(c=>`<h2 style="margin-top:8px">${c}</h2><div class="inset">${byCat[c].map(t=>`<div class="cell"><div class="body"><div class="t">${esc(t)}</div><div class="s">${eqLabel(g,t)}</div></div>${statusPill(t)}${eqStatus(g,t)==='confirmed'?'':`<button class="icon-btn" data-ok="${esc(t)}" title="Confirm" style="color:var(--green)">✓</button>`}<button class="icon-btn" data-bad="${esc(t)}" title="Flag broken" style="${eqStatus(g,t)==='broken'?'color:var(--red)':''}">!</button><button class="icon-btn" data-rm="${esc(t)}" title="Remove">✕</button></div>`).join('')}</div>`).join('')||'<div class="inset"><div class="empty">Nothing recorded yet. Log a workout here or add equipment.</div></div>'}
-      <div class="inset" style="margin-top:6px"><div class="cell tap btn-cell" id="gAddEq">＋ Add / Confirm Equipment</div></div></div>
+    <div class="grp"><h2>Equipment · ${known}</h2>${EQ_CATS.filter(c=>byCat[c]).map(c=>`<h2 style="margin-top:8px">${c}</h2><div class="inset">${byCat[c].map(t=>`<div class="cell"><div class="body"><div class="t">${esc(t)}${gymEq(g,t)?.brand?` <span class="muted small">· ${esc(gymEq(g,t).brand)}</span>`:''}${gymEq(g,t)?.unit?` <span class="eqchip" style="--c:var(--tint);font-size:11px;padding:1px 7px">${gymEq(g,t).unit}</span>`:''}</div><div class="s">${eqLabel(g,t)}</div></div>${statusPill(t)}<button class="icon-btn" data-scan-t="${esc(t)}" title="Scan">📷</button>${eqStatus(g,t)==='confirmed'?'':`<button class="icon-btn" data-ok="${esc(t)}" title="Confirm" style="color:var(--green)">✓</button>`}<button class="icon-btn" data-bad="${esc(t)}" title="Flag broken" style="${eqStatus(g,t)==='broken'?'color:var(--red)':''}">!</button><button class="icon-btn" data-rm="${esc(t)}" title="Remove">✕</button></div>`).join('')}</div>`).join('')||'<div class="inset"><div class="empty">Nothing recorded yet. Log a workout here or add equipment.</div></div>'}
+      <div class="inset" style="margin-top:6px"><div class="cell tap btn-cell" id="gAddEq">＋ Add / Confirm Equipment</div><div class="cell tap btn-cell" id="gScan">📷 Scan a Machine or Plates</div></div></div>
     <div class="grp"><div class="inset"><div class="cell tap btn-cell red" id="gDel">Remove Gym</div></div></div>`, h=>{
     h.querySelector('#gSetCur')?.addEventListener('click',()=>{ DB.settings.currentGym=id; save(); gymSheet(id); });
     h.querySelectorAll('[data-ok]').forEach(b=>b.onclick=()=>{ upsertEq(g,b.dataset.ok,'explicit'); save(); gymSheet(id); });
     h.querySelectorAll('[data-bad]').forEach(b=>b.onclick=()=>{ const r=gymEq(g,b.dataset.bad); r.broken=!r.broken; r.lastSeen=Date.now(); save(); gymSheet(id); });
     h.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ delete g.equipment[b.dataset.rm]; save(); gymSheet(id); });
     h.querySelector('#gAddEq').onclick=()=>equipPickerSheet(g,()=>gymSheet(id));
+    h.querySelector('#gScan').onclick=()=>scanSheet({gymId:id,onDone:()=>gymSheet(id)});
+    h.querySelectorAll('[data-scan-t]').forEach(b=>b.onclick=()=>scanSheet({gymId:id,equipType:b.dataset.scanT,onDone:()=>gymSheet(id)}));
     h.querySelector('#gDel').onclick=()=>{ delete DB.gyms[id]; if(DB.settings.currentGym===id) DB.settings.currentGym=null; save(); closeSheet(); gymsSheet(); };
   }, {cancel:'Back'});
   document.getElementById('shCancel').onclick=gymsSheet;
@@ -919,7 +984,7 @@ function renderToday(v,ta){
   const nb=STATE.nearby||[]; const ns=STATE.nearbyState;
   v.innerHTML=`
     ${g?`<div class="gymhero" id="heroGym"><div class="k">Training at</div><div class="n">${esc(g.name)}</div><div class="a">${esc(g.address||g.chain||'')}</div>
-        <div class="eqrow">${confirmed?`<span>✓ ${confirmed} confirmed</span>`:''}${Object.entries(eqCounts).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([c,n])=>`<span>${n} ${c}</span>`).join('')||'<span>No equipment recorded yet</span>'}</div>
+        <div class="eqrow">${g.unit?`<span>Marked in ${g.unit}</span>`:''}${confirmed?`<span>✓ ${confirmed} confirmed</span>`:''}${Object.entries(eqCounts).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([c,n])=>`<span>${n} ${c}</span>`).join('')||'<span>No equipment recorded yet</span>'}</div>
         <button class="sw" id="heroSwitch">Switch</button></div>`
       :`<div class="gymhero" id="heroGym"><div class="k">Where do you train?</div><div class="n">Pick your gym</div><div class="a">Logging workouts there builds its equipment list automatically.</div><div class="eqrow"><span>＋ Add a gym</span></div></div>`}
 
@@ -1100,13 +1165,18 @@ function renderActive(v,ta){
   const rest = STATE.restEnd ? `<div class="rest ${Date.now()>=STATE.restEnd?'go':''}" id="restBar"><span>${Date.now()>=STATE.restEnd?'Go':'Rest '+clock((STATE.restEnd-Date.now())/1000)}</span><button id="restSkip">Skip</button></div>` : `<div class="tiles" style="grid-template-columns:1fr 1fr 1fr"><div class="tile"><div class="k">Elapsed</div><div class="v mono" id="aClock">${clock((Date.now()-w.startedAt)/1000)}</div></div><div class="tile"><div class="k">Sets</div><div class="v mono">${w.sets.filter(s=>s.done).length}/${w.sets.length}</div></div><div class="tile tap" id="aGym" style="cursor:pointer"><div class="k">Gym</div><div class="v" style="font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${gym?esc(gym.name):'— tap to set'}</div></div></div>`;
   const warn = missingOrders.size ? `<div class="banner" style="background:var(--orange);color:#1a0c06">${missingOrders.size} exercise${missingOrders.size>1?'s use':' uses'} equipment not confirmed at ${esc(gym.name)} — tap Swap to adjust</div>` : '';
   v.innerHTML=`${rest}${warn}<div class="grp"><div class="inset">${Object.keys(groups).sort((a,b)=>a-b).map(k=>{ const g=groups[k]; const exId=g[0].ex; const p=r?.exercises.find(e=>e.ex===exId); const prior=bestE1RMBefore(exId,w.startedAt);
+    const known=eqUnitFor(gym,exId); const eu=STATE.exUnit?.[exId]||known||DB.settings.unit; const conv=eu!==DB.settings.unit;
     return `<div class="exblock"><div style="display:flex;align-items:center;gap:10px">${DB.exercises[exId]?`<span data-exinfo="${exId}" style="cursor:pointer">${exPhoto(DB.exercises[exId],40)}</span>`:''}<h3 style="flex:1;min-width:0">${esc(DB.exercises[exId]?.name)}</h3>${missingOrders.has(+k)?`<button class="cap sm" style="background:var(--orange);color:#1a0c06" data-swap="${k}">Swap</button>`:gym?`<button class="tb" style="font-size:14px" data-swap="${k}">Swap</button>`:''}${p?`<span class="rx">${p.sets}×${p.reps}${p.weight?' @ '+p.weight:''}</span>`:''}</div>${p?.notes?`<div class="note">${esc(p.notes)}</div>`:''}
-      <div class="setgrid"><span></span><span class="h">${DB.settings.unit}</span><span class="h">reps</span><span class="h">rpe</span><span></span>
-      ${g.map(s=>{ const pr=s.done&&prior>0&&e1rm(s)>prior; return `<span class="idx">${pr?'🏆':s.idx+1}</span><input type="number" inputmode="decimal" value="${s.weight||''}" data-f="weight" data-s="${s.id}" aria-label="weight"><input type="number" inputmode="numeric" value="${s.reps||''}" data-f="reps" data-s="${s.id}" aria-label="reps"><input type="number" inputmode="decimal" value="${s.rpe??''}" data-f="rpe" data-s="${s.id}" aria-label="RPE" step="0.5"><button class="chk ${s.done?'done':''}" data-chk="${s.id}" aria-label="Complete set">${s.done?'✓':''}</button>`; }).join('')}</div>
+      <div class="row small" style="display:flex;align-items:center;gap:8px;margin-top:6px"><div class="seg" style="width:110px;padding:2px"><button class="${eu==='lbs'?'on':''}" data-unit-ex="${exId}" data-u="lbs" style="padding:4px;font-size:12px">lb</button><button class="${eu==='kg'?'on':''}" data-unit-ex="${exId}" data-u="kg" style="padding:4px;font-size:12px">kg</button></div><span class="muted" style="font-size:12px">${conv?`entered in ${eu}, saved as ${DB.settings.unit}`:(known?`marked in ${eu} here`:'')}</span><span style="flex:1"></span><button class="tb" style="font-size:13px" data-scan="${exId}">📷 Scan</button></div>
+      <div class="setgrid"><span></span><span class="h">${eu}</span><span class="h">reps</span><span class="h">rpe</span><span></span>
+      ${g.map(s=>{ const pr=s.done&&prior>0&&e1rm(s)>prior; const shown=showIn(s.weight,eu); return `<span class="idx">${pr?'🏆':s.idx+1}</span><input type="number" inputmode="decimal" value="${shown}" data-f="weight" data-s="${s.id}" data-eu="${eu}" aria-label="weight"><input type="number" inputmode="numeric" value="${s.reps||''}" data-f="reps" data-s="${s.id}" aria-label="reps"><input type="number" inputmode="decimal" value="${s.rpe??''}" data-f="rpe" data-s="${s.id}" aria-label="RPE" step="0.5"><button class="chk ${s.done?'done':''}" data-chk="${s.id}" aria-label="Complete set">${s.done?'✓':''}</button>`; }).join('')}</div>
       <button class="addset" data-addset="${k}">+ Add Set</button></div>`; }).join('')}</div></div>
     <div class="grp"><div class="inset"><div class="field"><label for="wNotes">Notes</label><input type="text" id="wNotes" value="${esc(w.notes)}" placeholder="Optional"></div></div></div>
     <button class="big" id="aFinish2">Finish Workout</button>`;
-  v.querySelectorAll('input[data-s]').forEach(i=>i.onchange=()=>{ const s=w.sets.find(x=>x.id===i.dataset.s); s[i.dataset.f]=i.value===''?(i.dataset.f==='rpe'?null:0):parseFloat(i.value); save(); });
+  v.querySelectorAll('input[data-s]').forEach(i=>i.onchange=()=>{ const s=w.sets.find(x=>x.id===i.dataset.s); let val=i.value===''?(i.dataset.f==='rpe'?null:0):parseFloat(i.value);
+    if(i.dataset.f==='weight'&&val){ const eu=i.dataset.eu; if(eu!==DB.settings.unit) val=+(eu==='kg'?val/KG:val*KG).toFixed(1); } s[i.dataset.f]=val; save(); });
+  v.querySelectorAll('[data-unit-ex]').forEach(b=>b.onclick=()=>{ STATE.exUnit??={}; STATE.exUnit[b.dataset.unitEx]=b.dataset.u; render(); });
+  v.querySelectorAll('[data-scan]').forEach(b=>b.onclick=()=>scanSheet({gymId:w.gym,exId:b.dataset.scan,onDone:(u)=>{ if(u){ STATE.exUnit??={}; STATE.exUnit[b.dataset.scan]=u; } }}));
   v.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>{ const s=w.sets.find(x=>x.id===b.dataset.chk); s.done=!s.done; s.at=s.done?Date.now():null;
     if(s.done){ const p=r?.exercises.find(e=>e.ex===s.ex); if(p?.rest) STATE.restEnd=Date.now()+p.rest*1000; } save(); render(); });
   v.querySelectorAll('[data-addset]').forEach(b=>b.onclick=()=>{ const g=groups[b.dataset.addset]; const l=g[g.length-1]; w.sets.push({id:uid(),ex:l.ex,order:l.order,idx:g.length,weight:l.weight,reps:l.reps,rpe:l.rpe,done:false,at:null}); save(); render(); });
