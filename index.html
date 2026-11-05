@@ -309,7 +309,7 @@ const PALETTE = ['#007aff','#34c759','#ff9500','#af52de','#ff2d55','#5ac8fa','#f
 let DB = { exercises:{}, routines:{}, scheduled:[], workouts:[], gyms:{}, settings:{ unit:'lbs', currentGym:null }, meta:{ seeded:false } };
 let STATE = { tab:'today', weekAnchor: todayKey(), selDay: todayKey(), active:null, restEnd:null, range:'3M', trendEx:null,
               q:'', grp:'all', equip:'all', selecting:false, selected:new Set(), targetRoutine:null,
-              nearby:[], nearbyState:'idle', here:null };
+              nearby:[], nearbyState:'idle', nearbyQuery:'', here:null };
 
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){} }
 function load(){ try{ const s = localStorage.getItem(KEY); if(s){ DB = JSON.parse(s); return true; } }catch(e){} return false; }
@@ -560,23 +560,35 @@ function currentGym(){ return DB.gyms?.[DB.settings.currentGym]||null; }
 const NEARBY_KEY='liftplan.nearby.v1';
 function haversineKm(a,b){ const R=6371, toR=x=>x*Math.PI/180; const dLat=toR(b.lat-a.lat), dLon=toR(b.lng-a.lng); const h=Math.sin(dLat/2)**2+Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLon/2)**2; return 2*R*Math.asin(Math.sqrt(h)); }
 function loadNearby(){ try{ const c=JSON.parse(localStorage.getItem(NEARBY_KEY)||'null'); if(c&&Date.now()-c.at<6*3600e3){ STATE.nearby=c.list; STATE.here=c.here; } }catch(e){} }
-async function findNearby(){
+const OVERPASS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://lz4.overpass-api.de/api/interpreter'];
+function fetchT(url,opts,ms){ const c=new AbortController(); const t=setTimeout(()=>c.abort(),ms); return fetch(url,{...opts,signal:c.signal}).finally(()=>clearTimeout(t)); }
+function osmToGym(e,here){ const t=e.tags||{}; const lat=e.lat??e.center?.lat, lng=e.lon??e.center?.lon; if(!t.name||lat==null) return null;
+  const addr=[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')||t['addr:city']||'';
+  return {osm:`${e.type}/${e.id}`,name:t.name,chain:t.brand||null,address:addr,lat,lng,km:haversineKm(here,{lat,lng})}; }
+function dedupe(list){ return list.sort((a,b)=>a.km-b.km).filter((g,i,arr)=>arr.findIndex(x=>norm(x.name)===norm(g.name)&&Math.abs(x.km-g.km)<0.25)===i).slice(0,25); }
+async function searchOverpass(here,radius){
+  const q=`[out:json][timeout:15];(nwr["leisure"="fitness_centre"](around:${radius},${here.lat},${here.lng});nwr["amenity"="gym"](around:${radius},${here.lat},${here.lng});nwr["leisure"="sports_centre"]["sport"~"fitness|gym|crossfit|weightlifting"](around:${radius},${here.lat},${here.lng});nwr["club"="sport"]["sport"~"fitness|gym"](around:${radius},${here.lat},${here.lng}););out center tags;`;
+  let lastErr; for(const url of OVERPASS){ try{ const r=await fetchT(url,{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'}},12000); if(!r.ok) throw new Error('HTTP '+r.status); const j=await r.json(); return dedupe((j.elements||[]).map(e=>osmToGym(e,here)).filter(Boolean)); }catch(e){ lastErr=e; } }
+  throw lastErr||new Error('overpass');
+}
+async function searchNominatim(here, text){
+  const d=0.05; const vb=`${here.lng-d},${here.lat+d},${here.lng+d},${here.lat-d}`;
+  const url=`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=25&bounded=1&viewbox=${vb}&q=${encodeURIComponent(text||'gym')}`;
+  const r=await fetchT(url,{headers:{'Accept':'application/json'}},10000); if(!r.ok) throw new Error('HTTP '+r.status); const j=await r.json();
+  return dedupe(j.map(x=>({osm:`${x.osm_type}/${x.osm_id}`,name:(x.name||x.display_name.split(',')[0]),chain:null,address:x.display_name.split(',').slice(1,3).join(',').trim(),lat:+x.lat,lng:+x.lon,km:haversineKm(here,{lat:+x.lat,lng:+x.lon})})));
+}
+async function findNearby(text){
   if(!navigator.geolocation){ toast('Location not available here'); return; }
-  STATE.nearbyState='locating'; render();
-  let pos; try{ pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:12000,maximumAge:300000})); }
-  catch(e){ STATE.nearbyState='denied'; render(); return; }
-  const here={lat:pos.coords.latitude,lng:pos.coords.longitude}; STATE.here=here; STATE.nearbyState='searching'; render();
-  const q=`[out:json][timeout:20];(node["leisure"="fitness_centre"](around:4000,${here.lat},${here.lng});way["leisure"="fitness_centre"](around:4000,${here.lat},${here.lng}););out center tags;`;
-  try{
-    const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'}});
-    const j=await r.json();
-    const list=(j.elements||[]).map(e=>{ const t=e.tags||{}; const lat=e.lat??e.center?.lat, lng=e.lon??e.center?.lon; if(!t.name||lat==null) return null;
-      const addr=[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')||t['addr:city']||'';
-      return {osm:`${e.type}/${e.id}`,name:t.name,chain:t.brand||null,address:addr,lat,lng,km:haversineKm(here,{lat,lng})}; }).filter(Boolean)
-      .sort((a,b)=>a.km-b.km).filter((g,i,arr)=>arr.findIndex(x=>x.name===g.name&&Math.abs(x.km-g.km)<0.2)===i).slice(0,20);
-    STATE.nearby=list; STATE.nearbyState=list.length?'ok':'empty';
-    try{ localStorage.setItem(NEARBY_KEY,JSON.stringify({at:Date.now(),here,list})); }catch(e){}
-  }catch(e){ STATE.nearbyState='error'; }
+  if(!STATE.here){ STATE.nearbyState='locating'; render();
+    try{ const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:12000,maximumAge:300000})); STATE.here={lat:pos.coords.latitude,lng:pos.coords.longitude}; }
+    catch(e){ STATE.nearbyState='denied'; render(); return; } }
+  const here=STATE.here; STATE.nearbyState='searching'; render();
+  let list=[], err=null;
+  if(text){ try{ list=await searchNominatim(here,text); }catch(e){ err=e; } }
+  else { try{ list=await searchOverpass(here,4000); }catch(e){ err=e; }
+         if(!list.length){ try{ list=await searchNominatim(here,'gym'); err=null; }catch(e){ err=err||e; } } }
+  STATE.nearby=list; STATE.nearbyQuery=text||''; STATE.nearbyState=list.length?'ok':(err?'error':'empty');
+  if(list.length){ try{ localStorage.setItem(NEARBY_KEY,JSON.stringify({at:Date.now(),here,list})); }catch(e){} }
   render();
 }
 function adoptNearby(n){
@@ -912,12 +924,15 @@ function renderToday(v,ta){
       :`<div class="gymhero" id="heroGym"><div class="k">Where do you train?</div><div class="n">Pick your gym</div><div class="a">Logging workouts there builds its equipment list automatically.</div><div class="eqrow"><span>＋ Add a gym</span></div></div>`}
 
     <div class="grp"><h2>Gyms near you ${ns==='ok'?`<span class="link" id="nbRefresh">Refresh</span>`:''}</h2>
-      ${ns==='ok'&&nb.length?`<div class="hscroll">${nb.slice(0,12).map((n,i)=>{ const known=Object.values(DB.gyms).find(x=>x.osm===n.osm||norm(x.name)===norm(n.name)); return `<div class="mini" data-nb="${i}"><div class="d">${fmtKm(n.km)}${known?' · yours':''}</div><div class="n">${esc(n.name)}</div><div class="m">${esc(n.chain||n.address||'Gym')}${known?` · ${Object.keys(known.equipment||{}).length} equipment`:''}</div></div>`; }).join('')}</div>`
-      : ns==='locating'||ns==='searching'?`<div class="banner">${ns==='locating'?'Getting your location…':'Searching gyms within 2.5 miles…'}</div>`
-      : ns==='denied'?`<div class="banner" style="background:var(--fill);color:var(--sec)">Location was declined. Allow it in Settings → Safari → Location, then tap again.</div><button class="big gray" id="nbFind">Use my location</button>`
-      : ns==='empty'?`<div class="banner" style="background:var(--fill);color:var(--sec)">No gyms mapped within 2.5 miles. Add yours manually.</div>`
-      : ns==='error'?`<div class="banner" style="background:var(--fill);color:var(--sec)">Couldn't reach the map service (works on the hosted app, not inside the Claude preview).</div>`
+      ${ns==='ok'&&nb.length?`<div class="hscroll">${nb.slice(0,15).map((n,i)=>{ const known=Object.values(DB.gyms).find(x=>x.osm===n.osm||norm(x.name)===norm(n.name)); return `<div class="mini" data-nb="${i}"><div class="d">${fmtKm(n.km)}${known?' · yours':''}</div><div class="n">${esc(n.name)}</div><div class="m">${esc(n.chain||n.address||'Gym')}${known?` · ${Object.keys(known.equipment||{}).length} equipment`:''}</div></div>`; }).join('')}</div>`
+      : ns==='locating'?`<div class="banner">Getting your location…</div>`
+      : ns==='searching'?`<div class="banner">Searching the map within 2.5 miles…</div>`
+      : ns==='denied'?`<div class="banner" style="background:var(--fill);color:var(--sec)">Location was declined. Allow it in iPhone Settings → Privacy → Location Services → Safari, then try again.</div><button class="big gray" id="nbFind">Use my location</button>`
+      : ns==='empty'?`<div class="banner" style="background:var(--fill);color:var(--sec)">No gyms mapped within 2.5 miles. Try a name below, or add yours manually.</div>`
+      : ns==='error'?`<div class="banner" style="background:var(--fill);color:var(--sec)">The map service didn't answer. Try again, search by name, or add your gym manually.</div><button class="big gray" id="nbFind">Try again</button>`
       : `<button class="big gray" id="nbFind">Use my location to find gyms</button>`}
+      ${ns!=='locating'&&ns!=='searching'?`<div class="search"><span class="mag">⌕</span><input type="search" id="nbQ" placeholder="Search gyms by name (e.g. Equinox, XSport)" value="${esc(STATE.nearbyQuery||'')}" autocomplete="off"></div>`:''}
+      <div class="foot"><span class="link" id="nbManual" style="color:var(--tint);cursor:pointer">Add a gym manually</span> · map data © OpenStreetMap contributors</div>
     </div>
 
     <div class="session">
@@ -943,8 +958,10 @@ function renderToday(v,ta){
   const main=document.getElementById('main');
   v.querySelector('#heroGym').onclick=()=>{ if(g) gymSheet(g.id); else gymsSheet(); };
   v.querySelector('#heroSwitch')?.addEventListener('click',e=>{ e.stopPropagation(); gymsSheet(); });
-  v.querySelector('#nbFind')?.addEventListener('click',findNearby);
-  v.querySelector('#nbRefresh')?.addEventListener('click',findNearby);
+  v.querySelector('#nbRefresh')?.addEventListener('click',()=>findNearby());
+  v.querySelector('#nbFind')?.addEventListener('click',()=>findNearby());
+  v.querySelector('#nbManual')?.addEventListener('click',()=>addGymSheet(()=>render()));
+  const nq=v.querySelector('#nbQ'); if(nq) nq.onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); nq.blur(); findNearby(nq.value.trim()); } };
   v.querySelectorAll('[data-nb]').forEach(el=>el.onclick=()=>adoptNearby(nb[+el.dataset.nb]));
   v.querySelector('#startToday')?.addEventListener('click',()=>{ if(g) beginWorkout(next.routine,next.id,g.id); else startWorkout(next.routine,next.id); });
   v.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>startWorkout(b.dataset.quick));
