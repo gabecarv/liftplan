@@ -8,11 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { ref: vintage-candidates }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: python tools/fetch_loc.py candidates
       - run: |
           git config user.name "liftplan-bot" && git config user.email "bot@users.noreply.github.com"
+          git checkout -B loc-candidates
           git add candidates && git commit -m "LOC 1980s candidates" || echo "nothing"
-          git push origin HEAD:vintage-candidates
+          git push -f origin loc-candidates
