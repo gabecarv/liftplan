@@ -1,55 +1,69 @@
 {
- "_note": "Public-domain photographs from Wikimedia Commons; downloaded into images/vintage/ by the deploy workflow. Keep credits for the About screen.",
- "exercises": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Josef_Manger.jpg",
-  "credit": "Josef Manger, c. 1936 \u2014 public domain"
- },
+ "_note": "1978\u20131992 photographs: U.S. government (public domain), CC0 archives, and CC BY city archives. Downloaded into images/vintage/ by the deploy workflow.",
  "hero_today": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Josef_Manger.jpg",
-  "credit": "Josef Manger, c. 1936 \u2014 public domain"
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Marine_Corps_recruits_lift_weights_as_part_of_physical_training_at_the_Recruit_Training_Depot%2C_San_Diego_-_DPLA_-_3eba0fcb8486dbbac445838c4cd7004d.jpeg/1280px-Marine_Corps_recruits_lift_weights_as_part_of_physical_training_at_the_Recruit_Training_Depot%2C_San_Diego_-_DPLA_-_3eba0fcb8486dbbac445838c4cd7004d.jpeg",
+  "credit": "U.S. Marine Corps recruits lifting weights, 1988 (DoD) \u2014 public domain",
+  "title": "File:Marine Corps recruits lift weights as part of physical training at the Recruit Training Depot, San Diego - DPLA - 3eba0fcb8486dbbac445838c4cd7004d.jpeg"
+ },
+ "exercises": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Vzp%C4%9Bra%C4%8D_Franti%C5%A1ek_Nedv%C4%9Bd.jpg/1280px-Vzp%C4%9Bra%C4%8D_Franti%C5%A1ek_Nedv%C4%9Bd.jpg",
+  "credit": "Weightlifter Franti\u0161ek Nedv\u011bd, 1979 (Czech National Archives) \u2014 CC0",
+  "title": "File:Vzp\u011bra\u010d Franti\u0161ek Nedv\u011bd.jpg"
  },
  "hero_gym": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/YMCA_gymnasium_LCCN2016825295.jpg/1280px-YMCA_gymnasium_LCCN2016825295.jpg",
-  "credit": "YMCA gymnasium, 1910\u201325, National Photo Co. (Library of Congress) \u2014 public domain"
- },
- "hero_progress": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/1/10/Georg_Hackenschmidt_ca._1905.jpg",
-  "credit": "Georg Hackenschmidt, c. 1905 \u2014 public domain"
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Aerobics_class.jpg/1280px-Aerobics_class.jpg",
+  "credit": "Aerobics class, 1988 (U.S. government) \u2014 public domain",
+  "title": "File:Aerobics class.jpg"
  },
  "gyms": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/YMCA-Gymnasium_-_DPLA_-_4baa889548c05697f90b4d11ac7eb041.jpg/1280px-YMCA-Gymnasium_-_DPLA_-_4baa889548c05697f90b4d11ac7eb041.jpg",
-  "credit": "YMCA gymnasium, c. 1889, C. F. Schweinfurth (DPLA) \u2014 public domain"
- },
- "schedule": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/H.L._Stimson_at_desk_writing_LCCN2014685253.jpg/1280px-H.L._Stimson_at_desk_writing_LCCN2014685253.jpg",
-  "credit": "H. L. Stimson at desk, 1910, Bain News Service (Library of Congress) \u2014 public domain"
- },
- "progress": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/1/10/Georg_Hackenschmidt_ca._1905.jpg",
-  "credit": "Georg Hackenschmidt, c. 1905 \u2014 public domain"
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/The_U.S._Marine_detachment_aboard_the_aircraft_carrier_USS_JOHN_F._KENNEDY_%28CV-67%29_exercises_on_the_flight_deck_beside_an_Attack_Squadron_46_%28VA-46%29_A-7E_Corsair_II_aircraft_during_-_DPLA_-_75c91caea1c97efafe719bf6360a2a00.jpeg/1280px-thumbnail.jpeg",
+  "credit": "Marines exercising aboard USS Kitty Hawk (DoD) \u2014 public domain",
+  "title": "File:The U.S. Marine detachment aboard the aircraft carrier USS JOHN F. KENNEDY (CV-67) exercises on the flight deck beside an Attack Squadron 46 (VA-46) A-7E Corsair II aircraft during - DPLA - 75c91caea1c97efafe719bf6360a2a00.jpeg"
  },
  "routines": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/%22A._G._Spalding_and_Bros.%2C_exhibit_of_a_Model_Gymnasium%2C_showing_a_port-able_Indian_Club_and_Dumb_bell_rack%2C_with_patent_locking_device.%22.jpg/1280px-%22A._G._Spalding_and_Bros.%2C_exhibit_of_a_Model_Gymnasium%2C_showing_a_port-able_Indian_Club_and_Dumb_bell_rack%2C_with_patent_locking_device.%22.jpg",
-  "credit": "A. G. Spalding & Bros. model gymnasium, 1904 \u2014 public domain"
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/A_crewman_uses_exercise_equipment_on_the_missile_deck_of_the_nuclear-powered_fleet_ballistic_missile_submarine_OHIO_%28SSBN-726%29._The_OHIO%2C_which_was_built_by_General_Dynamics_Corp.%2C_-_DPLA_-_c412e41b3a67aaece09b2c41ff5ec1c5.jpeg/1280px-thumbnail.jpeg",
+  "credit": "Crewman on a cable machine aboard a U.S. Navy ship, 1980s (DoD) \u2014 public domain",
+  "title": "File:A crewman uses exercise equipment on the missile deck of the nuclear-powered fleet ballistic missile submarine OHIO (SSBN-726). The OHIO, which was built by General Dynamics Corp., - DPLA - c412e41b3a67aaece09b2c41ff5ec1c5.jpeg"
+ },
+ "schedule": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Dhr_Nietshoven_telefonerend_achter_zijn_bureau%2C_Bestanddeelnr_931-2645.jpg/1280px-Dhr_Nietshoven_telefonerend_achter_zijn_bureau%2C_Bestanddeelnr_931-2645.jpg",
+  "credit": "Man at his desk, 1981 (Nationaal Archief, Netherlands) \u2014 CC0",
+  "title": "File:Dhr Nietshoven telefonerend achter zijn bureau, Bestanddeelnr 931-2645.jpg"
+ },
+ "hero_progress": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Mayor_Raymond_L._Flynn_running_in_1985_Boston_Marathon_%289501949747%29.jpg/1280px-Mayor_Raymond_L._Flynn_running_in_1985_Boston_Marathon_%289501949747%29.jpg",
+  "credit": "Boston Marathon, 1980s (City of Boston Archives) \u2014 CC BY 2.0",
+  "title": "File:Mayor Raymond L. Flynn running in 1985 Boston Marathon (9501949747).jpg"
+ },
+ "progress": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Kellie_Everts%2C_Real_People%2C_1979.jpg/500px-Kellie_Everts%2C_Real_People%2C_1979.jpg",
+  "credit": "Kellie Everts with dumbbell, 1979 \u2014 public domain",
+  "title": "File:Kellie Everts, Real People, 1979.jpg"
  },
  "scan": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Collections_Mus%C3%A9e_National_du_Sport._Collections_Instruments_et_mat%C3%A9riels._Halt%C3%A8re_-_btv1b109505229.jpg/1280px-Collections_Mus%C3%A9e_National_du_Sport._Collections_Instruments_et_mat%C3%A9riels._Halt%C3%A8re_-_btv1b109505229.jpg",
-  "credit": "Dumbbell, Mus\u00e9e National du Sport / BnF \u2014 public domain"
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Evergreen_Systems_-_AutoCAD_2.6_-_May_1987_Puget_Sound_ComputerUser_%22CAD_POWER%21%22_advert.jpg/1280px-Evergreen_Systems_-_AutoCAD_2.6_-_May_1987_Puget_Sound_ComputerUser_%22CAD_POWER%21%22_advert.jpg",
+  "credit": "Computer workstation advertisement, 1987 \u2014 public domain",
+  "title": "File:Evergreen Systems - AutoCAD 2.6 - May 1987 Puget Sound ComputerUser \"CAD POWER!\" advert.jpg"
  },
  "history": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Louis_Cyr%2C_homme_fort.jpg/1280px-Louis_Cyr%2C_homme_fort.jpg",
-  "credit": "Louis Cyr, before 1900 \u2014 public domain"
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Boston_Marathon_runner_%2810086076954%29.jpg/1280px-Boston_Marathon_runner_%2810086076954%29.jpg",
+  "credit": "Boston Marathon runner, 1980s (City of Boston Archives) \u2014 CC BY 2.0",
+  "title": "File:Boston Marathon runner (10086076954).jpg"
  },
  "split": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Matchbox_label_-_Weightlifter_%28circa_1920s%29_-_MBP1487057063.jpg",
-  "credit": "Matchbox label, c. 1920s \u2014 public domain"
+  "url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/RR3114-0021R_USSR_1979_10rubles_Ag_Olympics80_KettlebellLifting_a.jpg",
+  "credit": "Moscow 1980 Olympics coin, 1979 \u2014 public domain",
+  "title": "File:RR3114-0021R USSR 1979 10rubles Ag Olympics80 KettlebellLifting a.jpg"
  },
  "import": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Clement_Driscoll_seated_at_desk_writing_LCCN2014685344.jpg/1280px-Clement_Driscoll_seated_at_desk_writing_LCCN2014685344.jpg",
-  "credit": "Clement Driscoll at desk, Bain News Service (Library of Congress) \u2014 public domain"
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Interior_of_an_office_in_Paris_in_1985_62e0c1e21f1b292f0ec2531756d0febf.jpg/1280px-Interior_of_an_office_in_Paris_in_1985_62e0c1e21f1b292f0ec2531756d0febf.jpg",
+  "credit": "Office interior, Paris, 1985 \u2014 public domain",
+  "title": "File:Interior of an office in Paris in 1985 62e0c1e21f1b292f0ec2531756d0febf.jpg"
  },
  "calendar": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Daughter_of_man_who_gave_Landis_first_job_discovered_at_new_Willard_Hotel%2C_Wash._When_Judge_Kenesaw_M._Landis%2C_High_Commissioner_of_Baseball_was_in_Wash._for_the_World_Series%2C_he_discovered_LCCN2016893800.jpg/1280px-Daughter_of_man_who_gave_Landis_first_job_discovered_at_new_Willard_Hotel%2C_Wash._When_Judge_Kenesaw_M._Landis%2C_High_Commissioner_of_Baseball_was_in_Wash._for_the_World_Series%2C_he_discovered_LCCN2016893800.jpg",
-  "credit": "Harris & Ewing, 1924 (Library of Congress) \u2014 public domain"
- }
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Analogue_estimating_office.jpg/1280px-Analogue_estimating_office.jpg",
+  "credit": "Estimating office, 1988 \u2014 CC BY 3.0",
+  "title": "File:Analogue estimating office.jpg"
+ },
+ "_set": "1980s"
 }

@@ -2,10 +2,10 @@
 import json, os, sys, time, urllib.request
 from PIL import Image
 UA={"User-Agent":"LiftPlan-vintage/1.0 (github.com/gabecarv/liftplan)"}
-m=json.load(open("vintage.json")); os.makedirs("images/vintage",exist_ok=True); ok=0
+m=json.load(open("vintage.json")); SET=m.get("_set","vintage"); DIR=f"images/vintage-{SET}" if SET!="vintage" else "images/vintage"; os.makedirs(DIR,exist_ok=True); ok=0
 for key,v in m.items():
     if key.startswith("_"): continue
-    out=f"images/vintage/{key}.jpg"
+    out=f"{DIR}/{key}.jpg"
     if os.path.exists(out): ok+=1; continue
     for attempt in range(5):
         try:
