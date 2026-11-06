@@ -4,10 +4,7 @@ import json, os, re, sys, urllib.parse, urllib.request, time
 API = "https://commons.wikimedia.org/w/api.php"
 UA = {"User-Agent": "LiftPlan-vintage-fetch/1.0 (github.com/gabecarv/liftplan)"}
 TERMS = {
-  "lift80": ["weightlifting 1980s", "bodybuilding 1980s", "weight room 1980s", "bench press 1985", "Marines weight lifting 1980s", "Air Force fitness center 1980s", "Navy weight room 1980s", "Nautilus machine 1980s", "powerlifting 1980s", "Olympic weightlifting 1984", "weightlifting 1988 Olympics", "Soldiers lifting weights 1980s"],
-  "gym80":  ["gym 1980s", "fitness center 1980s", "aerobics 1980s", "health club 1980s", "jazzercise", "gymnasium 1985 photograph", "exercise class 1980s"],
-  "desk80": ["office 1980s photograph", "computer office 1980s", "desk 1985 photograph", "appointment calendar 1980s", "Filofax", "typewriter office 1980s", "planner desk 1980s"],
-  "run80":  ["jogging 1980s", "running 1980s photograph", "track athlete 1980s", "stopwatch 1980s", "marathon 1980s photograph"],
+  "mil80": ["lifting weights DN-ST", "weight training DF-ST", "weight room DN-SC", "lifts weights 1985", "bench press Marines 1987", "weightlifting competition 1986 Navy", "Universal gym machine", "fitness center DF-SC 1988", "aerobics class DN-ST", "aerobic exercise 1986 Air Force", "physical fitness test 1984 Army", "body building contest 1985 Navy", "weightlifting Seoul 1988", "Naim Suleymanoglu", "Nautilus equipment 1980s"],
 }
 OK_LICENSE = re.compile(r"public domain|cc0|pd-|^cc by( \d\.\d)?$|cc-by(-\d\.\d)?$", re.I)
 def api(params):
