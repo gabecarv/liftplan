@@ -4,10 +4,8 @@ import json, os, re, sys, urllib.parse, urllib.request, time
 API = "https://commons.wikimedia.org/w/api.php"
 UA = {"User-Agent": "LiftPlan-vintage-fetch/1.0 (github.com/gabecarv/liftplan)"}
 TERMS = {
-  "strongman": ["strongman barbell", "weightlifter 1920s", "weightlifting 1930s", "Sandow dumbbell", "Arthur Saxon", "Muscle Beach"],
-  "gym":       ["gymnasium interior 1920s", "YMCA gymnasium", "weightlifting gym 1940s", "gymnasium Indian clubs"],
-  "study":     ["man writing desk 1920s", "office desk 1930s photograph", "student library 1930s", "typewriter 1920s photograph"],
-  "progress":  ["stopwatch photograph 1930s", "track athlete 1920s", "weighing scale 1930s photograph"],
+  "lift":  ["Sandow barbell", "Eugen Sandow dumbbell photograph", "Louis Cyr", "George Hackenschmidt", "globe barbell", "Siegmund Klein", "weightlifter 1936 Olympics", "Hermann Goerner", "Launceston Elliot", "weight lifting Bain News Service", "strongman Harris Ewing"],
+  "desk":  ["man reading at desk lamp Harris Ewing", "desk writing Bain News Service", "clerk desk 1920s photograph", "calendar wall office 1930s photograph", "student desk books 1920s photograph", "man writing letter 1920s photograph", "accountant ledger photograph 1930s", "appointment desk diary photograph"],
 }
 OK_LICENSE = re.compile(r"public domain|cc0|pd-", re.I)
 def api(params):
@@ -20,13 +18,13 @@ def api(params):
             if e.code == 429: time.sleep(8 * (attempt + 1)); continue
             raise
     raise RuntimeError("rate limited")
-def search(term, n=12):
+def search(term, n=10):
     j = api({"action": "query", "list": "search", "srsearch": term + " filetype:bitmap", "srnamespace": 6, "srlimit": n})
     return [h["title"] for h in j.get("query", {}).get("search", [])]
 def info(titles):
     out = []
     for i in range(0, len(titles), 20):
-        j = api({"action": "query", "prop": "imageinfo", "titles": "|".join(titles[i:i+20]), "iiprop": "url|size|extmetadata", "iiurlwidth": 1400})
+        j = api({"action": "query", "prop": "imageinfo", "titles": "|".join(titles[i:i+20]), "iiprop": "url|size|extmetadata", "iiurlwidth": 1024})
         for p in j.get("query", {}).get("pages", {}).values():
             ii = (p.get("imageinfo") or [None])[0]
             if not ii: continue
