@@ -1,0 +1,55 @@
+{
+ "_note": "Public-domain photographs from Wikimedia Commons; downloaded into images/vintage/ by the deploy workflow. Keep credits for the About screen.",
+ "exercises": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Josef_Manger.jpg",
+  "credit": "Josef Manger, c. 1936 \u2014 public domain"
+ },
+ "hero_today": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Josef_Manger.jpg",
+  "credit": "Josef Manger, c. 1936 \u2014 public domain"
+ },
+ "hero_gym": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/YMCA_gymnasium_LCCN2016825295.jpg/1280px-YMCA_gymnasium_LCCN2016825295.jpg",
+  "credit": "YMCA gymnasium, 1910\u201325, National Photo Co. (Library of Congress) \u2014 public domain"
+ },
+ "hero_progress": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/1/10/Georg_Hackenschmidt_ca._1905.jpg",
+  "credit": "Georg Hackenschmidt, c. 1905 \u2014 public domain"
+ },
+ "gyms": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/YMCA-Gymnasium_-_DPLA_-_4baa889548c05697f90b4d11ac7eb041.jpg/1280px-YMCA-Gymnasium_-_DPLA_-_4baa889548c05697f90b4d11ac7eb041.jpg",
+  "credit": "YMCA gymnasium, c. 1889, C. F. Schweinfurth (DPLA) \u2014 public domain"
+ },
+ "schedule": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/H.L._Stimson_at_desk_writing_LCCN2014685253.jpg/1280px-H.L._Stimson_at_desk_writing_LCCN2014685253.jpg",
+  "credit": "H. L. Stimson at desk, 1910, Bain News Service (Library of Congress) \u2014 public domain"
+ },
+ "progress": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/1/10/Georg_Hackenschmidt_ca._1905.jpg",
+  "credit": "Georg Hackenschmidt, c. 1905 \u2014 public domain"
+ },
+ "routines": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/%22A._G._Spalding_and_Bros.%2C_exhibit_of_a_Model_Gymnasium%2C_showing_a_port-able_Indian_Club_and_Dumb_bell_rack%2C_with_patent_locking_device.%22.jpg/1280px-%22A._G._Spalding_and_Bros.%2C_exhibit_of_a_Model_Gymnasium%2C_showing_a_port-able_Indian_Club_and_Dumb_bell_rack%2C_with_patent_locking_device.%22.jpg",
+  "credit": "A. G. Spalding & Bros. model gymnasium, 1904 \u2014 public domain"
+ },
+ "scan": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Collections_Mus%C3%A9e_National_du_Sport._Collections_Instruments_et_mat%C3%A9riels._Halt%C3%A8re_-_btv1b109505229.jpg/1280px-Collections_Mus%C3%A9e_National_du_Sport._Collections_Instruments_et_mat%C3%A9riels._Halt%C3%A8re_-_btv1b109505229.jpg",
+  "credit": "Dumbbell, Mus\u00e9e National du Sport / BnF \u2014 public domain"
+ },
+ "history": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Louis_Cyr%2C_homme_fort.jpg/1280px-Louis_Cyr%2C_homme_fort.jpg",
+  "credit": "Louis Cyr, before 1900 \u2014 public domain"
+ },
+ "split": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Matchbox_label_-_Weightlifter_%28circa_1920s%29_-_MBP1487057063.jpg",
+  "credit": "Matchbox label, c. 1920s \u2014 public domain"
+ },
+ "import": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Clement_Driscoll_seated_at_desk_writing_LCCN2014685344.jpg/1280px-Clement_Driscoll_seated_at_desk_writing_LCCN2014685344.jpg",
+  "credit": "Clement Driscoll at desk, Bain News Service (Library of Congress) \u2014 public domain"
+ },
+ "calendar": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Daughter_of_man_who_gave_Landis_first_job_discovered_at_new_Willard_Hotel%2C_Wash._When_Judge_Kenesaw_M._Landis%2C_High_Commissioner_of_Baseball_was_in_Wash._for_the_World_Series%2C_he_discovered_LCCN2016893800.jpg/1280px-Daughter_of_man_who_gave_Landis_first_job_discovered_at_new_Willard_Hotel%2C_Wash._When_Judge_Kenesaw_M._Landis%2C_High_Commissioner_of_Baseball_was_in_Wash._for_the_World_Series%2C_he_discovered_LCCN2016893800.jpg",
+  "credit": "Harris & Ewing, 1924 (Library of Congress) \u2014 public domain"
+ }
+}
