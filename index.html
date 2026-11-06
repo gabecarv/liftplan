@@ -75,6 +75,7 @@ h1,h2,h3{margin:0;font-weight:500;letter-spacing:-.01em}
 .tb.red{color:var(--red)}
 .tb:disabled{color:var(--ter)}
 main{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 20px calc(100px + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
+.navbar[style*="display: none"] + main{padding-top:calc(12px + env(safe-area-inset-top,0px))}
 .view{display:flex;flex-direction:column;gap:26px;padding-top:6px}
 .view.enter{animation:viewin .25s var(--ease)}
 @keyframes viewin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -166,6 +167,59 @@ textarea{text-align:left;font-family:var(--mono);font-size:12px;min-height:140px
 .quick button{background:var(--card);border:0;border-radius:18px;box-shadow:var(--shadow);padding:14px;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:450;color:var(--label);transition:transform .2s var(--ease)}
 .quick button:active{transform:scale(.97)}
 .quick .ic{width:34px;height:34px;border-radius:10px;background:var(--tint-soft);color:var(--tint);display:grid;place-items:center;font-size:16px;flex:none}
+
+
+/* Home hub (storefront-style navigation) */
+.hubbar{display:flex;align-items:center;gap:10px;padding:2px 0 4px}
+.hubbar .loc{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:500;background:none;border:0;padding:0;cursor:pointer;color:var(--label);min-width:0}
+.hubbar .loc span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.hubbar .loc i{color:var(--sec);font-style:normal;font-size:13px}
+.hubbar .sp{flex:1}
+.hubbar .ib{width:40px;height:40px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);border:0;display:grid;place-items:center;color:var(--label);cursor:pointer}
+.hubbar .ib svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.carousel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -20px;padding:0 20px}
+.carousel::-webkit-scrollbar{display:none}
+.slide{flex:none;width:calc(100% - 0px);scroll-snap-align:center;border-radius:26px;overflow:hidden;position:relative;min-height:190px;background:#2b3330;color:#fff;display:flex;box-shadow:var(--shadow)}
+.slide .txt{padding:22px 20px;display:flex;flex-direction:column;justify-content:center;gap:8px;flex:1;min-width:0;position:relative;z-index:1}
+.slide .k{font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.slide .h{font-size:24px;font-weight:500;line-height:1.15;letter-spacing:-.3px}
+.slide .m{font-size:13.5px;opacity:.8}
+.slide .cta{align-self:flex-start;margin-top:6px;background:#fff;color:#1f2624;border:0;border-radius:999px;padding:9px 16px;font-size:14px;font-weight:500;cursor:pointer}
+.slide .img{width:46%;flex:none;position:relative;overflow:hidden}
+.slide .img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.slide .img::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#2b3330 0%,rgba(43,51,48,0) 45%);z-index:1}
+.slide.teal{background:linear-gradient(135deg,var(--hero-a),var(--hero-b))}
+.slide.teal .img::before{background:linear-gradient(90deg,var(--hero-a) 0%,rgba(0,0,0,0) 50%)}
+.slide .stat{display:flex;gap:18px;margin-top:4px}
+.slide .stat b{display:block;font-size:22px;font-weight:500;letter-spacing:-.3px}
+.slide .stat span{font-size:12px;opacity:.75}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--fill2);transition:background .2s,transform .2s}
+.dots i.on{background:var(--label);transform:scale(1.25)}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ftile{position:relative;border-radius:22px;overflow:hidden;min-height:118px;display:flex;align-items:center;justify-content:flex-end;padding:14px;cursor:pointer;background:var(--tbg);color:var(--tfg,var(--label));box-shadow:var(--shadow);transition:transform .2s var(--ease)}
+.ftile:active{transform:scale(.97)}
+.ftile .pic{position:absolute;left:0;top:0;bottom:0;width:58%;-webkit-mask-image:linear-gradient(90deg,#000 55%,transparent 100%);mask-image:linear-gradient(90deg,#000 55%,transparent 100%)}
+.ftile .pic img{width:100%;height:100%;object-fit:cover;display:block}
+.ftile .pic .extile{width:100%!important;height:100%!important;border-radius:0}
+.ftile .pic .extile > svg:first-child{padding:18%}
+.ftile .pic .extile .badge{display:none}
+.ftile .lbl{position:relative;z-index:1;font-size:17px;font-weight:500;letter-spacing:-.2px;text-align:right}
+.ftile .lbl small{display:block;font-size:12px;font-weight:400;opacity:.7;margin-top:2px}
+.others{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:2px 20px 6px}
+.others::-webkit-scrollbar{display:none}
+.otile{flex:none;width:112px;cursor:pointer;transition:transform .2s var(--ease)}
+.otile:active{transform:scale(.96)}
+.otile .box{height:104px;border-radius:20px;background:var(--tbg);display:grid;place-items:center;font-size:34px;overflow:hidden;position:relative;box-shadow:var(--shadow)}
+.otile .box img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.otile .box .extile{width:64px!important;height:64px!important}
+.otile .n{text-align:center;font-size:13.5px;font-weight:450;margin-top:8px}
+.otile .n small{display:block;font-size:11.5px;color:var(--sec);font-weight:400}
+/* raised centre tab */
+.tabbar button.center{flex:none;width:64px;margin:-22px 2px 0;position:relative}
+.tabbar button.center .orb{width:56px;height:56px;border-radius:18px;background:var(--label);color:var(--bg);display:grid;place-items:center;box-shadow:0 10px 24px rgba(38,43,41,.28)}
+.tabbar button.center .orb svg{width:26px;height:26px;stroke:var(--bg)}
+.tabbar button.center.on .orb{background:var(--tint)}
 
 /* Exercise library: photo grid */
 .search{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:14px;padding:10px 14px;color:var(--sec);box-shadow:var(--shadow)}
@@ -597,15 +651,15 @@ async function searchNominatim(here, text){
 }
 async function findNearby(text){
   if(!navigator.geolocation){ toast('Location not available here'); return; }
-  if(!STATE.here){ STATE.nearbyState='locating'; render();
+  if(!STATE.here){ STATE.nearbyState='locating'; render(); STATE._nbDraw?.();
     try{ const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:12000,maximumAge:300000})); STATE.here={lat:pos.coords.latitude,lng:pos.coords.longitude}; }
     catch(e){ STATE.nearbyState='denied'; render(); return; } }
-  const here=STATE.here; STATE.nearbyState='searching'; render();
+  const here=STATE.here; STATE.nearbyState='searching'; render(); STATE._nbDraw?.();
   let list=[], err=null;
   if(text){ try{ list=await searchNominatim(here,text); }catch(e){ err=e; } }
   else { try{ list=await searchOverpass(here,4000); }catch(e){ err=e; }
          if(!list.length){ try{ list=await searchNominatim(here,'gym'); err=null; }catch(e){ err=err||e; } } }
-  STATE.nearby=list; STATE.nearbyQuery=text||''; STATE.nearbyState=list.length?'ok':(err?'error':'empty');
+  STATE.nearby=list; STATE.nearbyQuery=text||''; STATE.nearbyState=list.length?'ok':(err?'error':'empty'); STATE._nbDraw?.();
   if(list.length){ try{ localStorage.setItem(NEARBY_KEY,JSON.stringify({at:Date.now(),here,list})); }catch(e){} }
   render();
 }
@@ -869,7 +923,7 @@ function openSheet(title, html, after, opts={}){
   h.querySelector('#shCancel').onclick=closeSheet;
   if(after) after(h);
 }
-function closeSheet(){ document.getElementById('sheetHost').innerHTML=''; }
+function closeSheet(){ document.getElementById('sheetHost').innerHTML=''; STATE._nbDraw=null; }
 
 function importSheet(){
   const defStart = (()=>{ const t=parseDay(todayKey()); const off=(8-t.getDay())%7; return addDays(todayKey(), off||0); })();
@@ -963,98 +1017,106 @@ function workoutSheet(id){
 }
 
 // ---------- Views ----------
-const TABS=[['today','Today','M12 3l9 8h-3v9h-5v-6h-2v6H6v-9H3z'],
+const TABS=[['today','Home','M12 3l9 8h-3v9h-5v-6h-2v6H6v-9H3z'],
             ['exercises','Exercises','M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12M8 5h-2v14h2zM16 5h2v14h-2z'],
-            ['routines','Routines','M5 7h14M5 12h14M5 17h9M3 7h.01M3 12h.01M3 17h.01'],
+            ['start','Start','M8 5v14l11-7z'],
             ['schedule','Schedule','M4 5.5h16a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6.5a1 1 0 0 1 1-1zM3 10h18M8 3v4M16 3v4'],
             ['trends','Progress','M3 18l6-7 4 4 8-9M14 6h7v7']];
-const TITLES={today:'Today',exercises:'Exercises',schedule:'Schedule',routines:'Routines',history:'History',trends:'Progress',settings:'Settings'};
+const TITLES={today:'',exercises:'Exercises',schedule:'Schedule',routines:'Routines',history:'History',trends:'Progress',settings:'Settings'};
 const GEAR='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
 function render(){
-  document.getElementById('tabbar').innerHTML = TABS.map(([k,l,p])=>`<button class="${STATE.tab===k?'on':''}" data-tab="${k}" aria-label="${l}"><svg viewBox="0 0 24 24"><path d="${p}"/></svg>${l}</button>`).join('');
-  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{ if(STATE.active) return; if(STATE.tab!==b.dataset.tab){ STATE.selecting=false; STATE.selected.clear(); STATE.targetRoutine=null; } STATE.tab=b.dataset.tab; STATE._enter=true; document.getElementById('main').scrollTop=0; render(); });
+  document.getElementById('tabbar').innerHTML = TABS.map(([k,l,p])=>k==='start'?`<button class="center ${STATE.active?'on':''}" data-tab="start" aria-label="Start workout"><span class="orb"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${p}"/></svg></span></button>`:`<button class="${STATE.tab===k?'on':''}" data-tab="${k}" aria-label="${l}"><svg viewBox="0 0 24 24"><path d="${p}"/></svg>${l}</button>`).join('');
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{ if(b.dataset.tab==='start'){ quickStart(); return; } if(STATE.active) return; if(STATE.tab!==b.dataset.tab){ STATE.selecting=false; STATE.selected.clear(); STATE.targetRoutine=null; } STATE.tab=b.dataset.tab; STATE._enter=true; document.getElementById('main').scrollTop=0; render(); });
   const v=document.getElementById('view'); const ta=document.getElementById('topActions'); ta.innerHTML=''; ta.style.minWidth='';
   v.classList.remove('enter'); if(STATE._enter){ void v.offsetWidth; v.classList.add('enter'); STATE._enter=false; }
-  const nb=document.getElementById('navbar'); nb.classList.toggle('compact', !!STATE.active);
+  const nb=document.getElementById('navbar'); nb.classList.toggle('compact', !!STATE.active); nb.style.display=(!STATE.active&&STATE.tab==='today')?'none':'';
   if(!STATE.active) nb.querySelector('.lead')?.remove();
   if(STATE.active||STATE.tab!=='exercises') renderActionBar('');
   const vt=document.getElementById('viewTitle'); vt.textContent = STATE.active ? (DB.workouts.find(x=>x.id===STATE.active)?.name||'Workout') : TITLES[STATE.tab];
-  if(!STATE.active&&STATE.tab==='today'){ const sub=document.createElement('span'); sub.className='sub'; sub.textContent=new Date().toLocaleDateString([], {weekday:'long',month:'long',day:'numeric'}); vt.appendChild(sub); }
+
   if(STATE.active) return renderActive(v,ta);
   ({today:renderToday,exercises:renderExercises,schedule:renderSchedule,routines:renderRoutines,history:renderHistory,trends:renderTrends,settings:renderSettings})[STATE.tab](v,ta);
 }
 
 
 // ---------- Today (home) ----------
+function quickStart(){
+  if(STATE.active) return;
+  const t=todayKey(); const next=DB.scheduled.find(x=>x.date===t&&!x.done&&DB.routines[x.routine]);
+  if(next){ const g=currentGym(); if(g) beginWorkout(next.routine,next.id,g.id); else startWorkout(next.routine,next.id); return; }
+  const rs=Object.values(DB.routines).sort((a,b)=>a.name.localeCompare(b.name));
+  if(!rs.length){ splitSheet(); return; }
+  openSheet('Start a Workout', `<div class="grp"><div class="inset">${rs.map(r=>`<div class="cell tap" data-r="${r.id}"><span class="dot" style="background:${r.color}"></span><div class="body"><div class="t">${esc(r.name)}</div><div class="s">${r.exercises.length} exercises</div></div><span class="chev">›</span></div>`).join('')}</div></div>`, h=>{ h.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{ closeSheet(); startWorkout(b.dataset.r); }); });
+}
 function renderToday(v,ta){
-  ta.innerHTML=`<button class="tb" id="tSettings" aria-label="Settings" style="display:flex">${GEAR}</button>`;
-  ta.querySelector('#tSettings').onclick=()=>{ STATE.tab='settings'; render(); };
+  document.getElementById('navbar').style.display='none';
   const g=currentGym(); const t=todayKey();
-  const todays=DB.scheduled.filter(x=>x.date===t); const next=todays.find(x=>!x.done)||null;
-  const upcoming=DB.scheduled.filter(x=>x.date>t&&!x.done).slice(0,6);
-  const routines=Object.values(DB.routines).sort((a,b)=>a.name.localeCompare(b.name));
-  const last=DB.workouts.filter(w=>w.endedAt).sort((a,b)=>b.startedAt-a.startedAt)[0];
-  const eqCounts={}; if(g) Object.keys(g.equipment||{}).forEach(tp=>{ const c=(EQUIP_TYPES.find(x=>x[0]===tp)||[])[1]||'other'; eqCounts[c]=(eqCounts[c]||0)+1; });
-  const confirmed=g?Object.values(g.equipment||{}).filter(r=>r.source==='explicit').length:0;
-  // week row (Mon–Sun containing today)
-  const td=parseDay(t); const mon=addDays(t,-((td.getDay()+6)%7)); const days=[...Array(7)].map((_,i)=>addDays(mon,i));
-  const doneDays=new Set(DB.workouts.filter(w=>w.endedAt).map(w=>isoDay(new Date(w.startedAt))));
-  const planDays=new Set(DB.scheduled.map(x=>x.date));
-  const nb=STATE.nearby||[]; const ns=STATE.nearbyState;
+  const todays=DB.scheduled.filter(x=>x.date===t); const next=todays.find(x=>!x.done&&DB.routines[x.routine])||null;
+  const routines=Object.values(DB.routines); const ws=DB.workouts.filter(w=>w.endedAt);
+  const weekStart=Date.now()-7*86400000; const wk=ws.filter(w=>w.startedAt>=weekStart); const wkVol=wk.reduce((a,w)=>a+vol(w),0);
+  const confirmed=g?Object.values(g.equipment||{}).filter(r=>r.source==='explicit').length:0, known=g?Object.keys(g.equipment||{}).length:0;
+  const photoOf=name=>{ const e=findEx(name); const m=e&&mediaFor(e); return m?`${IMG_BASE}${m.id}_1.jpg`:null; };
+  const pic=(name,fallbackEx)=>{ const src=photoOf(name); const e=findEx(name)||fallbackEx; return src?`<img src="${src}" alt="" loading="lazy" onerror="this.remove()">`:''; };
+  // hero slides
+  const slides=[];
+  if(next){ const r=DB.routines[next.routine]; const ex0=DB.exercises[r.exercises[0]?.ex]; const src=ex0&&mediaFor(ex0)?`${IMG_BASE}${mediaFor(ex0).id}_1.jpg`:null;
+    slides.push(`<div class="slide" data-slide="start"><div class="txt"><div class="k">Today's session</div><div class="h">${esc(r.name)}</div><div class="m">${next.time?next.time+' · ':''}${r.exercises.length} exercises${next.plan?' · wk '+next.week:''}</div><button class="cta" data-act="startToday">Start workout</button></div><div class="img">${src?`<img src="${src}" alt="" onerror="this.remove()">`:''}</div></div>`); }
+  else slides.push(`<div class="slide" data-slide="rest"><div class="txt"><div class="k">Today</div><div class="h">Rest day</div><div class="m">Nothing scheduled. Start any routine or plan the week.</div><button class="cta" data-act="quick">Start a workout</button></div><div class="img">${pic('Deadlift (Barbell)')}</div></div>`);
+  slides.push(`<div class="slide teal" data-slide="gym"><div class="txt"><div class="k">Your gym</div><div class="h">${g?esc(g.name):'Pick your gym'}</div>${g?`<div class="stat"><div><b>${confirmed}</b><span>confirmed</span></div><div><b>${known}</b><span>known</span></div></div>`:`<div class="m">Logging there builds its equipment list.</div>`}<button class="cta" data-act="gym">${g?'View equipment':'Find gyms'}</button></div><div class="img">${pic('Leg Press')}</div></div>`);
+  slides.push(`<div class="slide" data-slide="prog"><div class="txt"><div class="k">This week</div><div class="h">${wk.length} workout${wk.length===1?'':'s'}</div><div class="stat"><div><b>${wkVol>=1000?Math.round(wkVol/1000)+'K':Math.round(wkVol)}</b><span>${DB.settings.unit} volume</span></div><div><b>${ws.length}</b><span>all time</span></div></div><button class="cta" data-act="trends">See progress</button></div><div class="img">${pic('Squat (Barbell)')}</div></div>`);
+  const T={ex:'var(--t-blush)',rt:'var(--t-sage)',sc:'var(--t-ink)',pg:'var(--t-sand)'};
   v.innerHTML=`
-    ${g?`<div class="gymhero" id="heroGym"><div class="k">Training at</div><div class="n">${esc(g.name)}</div><div class="a">${esc(g.address||g.chain||'')}</div>
-        <div class="eqrow">${g.unit?`<span>Marked in ${g.unit}</span>`:''}${confirmed?`<span>✓ ${confirmed} confirmed</span>`:''}${Object.entries(eqCounts).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([c,n])=>`<span>${n} ${c}</span>`).join('')||'<span>No equipment recorded yet</span>'}</div>
-        <button class="sw" id="heroSwitch">Switch</button></div>`
-      :`<div class="gymhero" id="heroGym"><div class="k">Where do you train?</div><div class="n">Pick your gym</div><div class="a">Logging workouts there builds its equipment list automatically.</div><div class="eqrow"><span>＋ Add a gym</span></div></div>`}
-
-    <div class="grp"><h2>Gyms near you ${ns==='ok'?`<span class="link" id="nbRefresh">Refresh</span>`:''}</h2>
-      ${ns==='ok'&&nb.length?`<div class="hscroll">${nb.slice(0,15).map((n,i)=>{ const known=Object.values(DB.gyms).find(x=>x.osm===n.osm||norm(x.name)===norm(n.name)); return `<div class="mini" data-nb="${i}"><div class="d">${fmtKm(n.km)}${known?' · yours':''}</div><div class="n">${esc(n.name)}</div><div class="m">${esc(n.chain||n.address||'Gym')}${known?` · ${Object.keys(known.equipment||{}).length} equipment`:''}</div></div>`; }).join('')}</div>`
-      : ns==='locating'?`<div class="banner">Getting your location…</div>`
-      : ns==='searching'?`<div class="banner">Searching the map within 2.5 miles…</div>`
-      : ns==='denied'?`<div class="banner" style="background:var(--fill);color:var(--sec)">Location was declined. Allow it in iPhone Settings → Privacy → Location Services → Safari, then try again.</div><button class="big gray" id="nbFind">Use my location</button>`
-      : ns==='empty'?`<div class="banner" style="background:var(--fill);color:var(--sec)">No gyms mapped within 2.5 miles. Try a name below, or add yours manually.</div>`
-      : ns==='error'?`<div class="banner" style="background:var(--fill);color:var(--sec)">The map service didn't answer. Try again, search by name, or add your gym manually.</div><button class="big gray" id="nbFind">Try again</button>`
-      : `<button class="big gray" id="nbFind">Use my location to find gyms</button>`}
-      ${ns!=='locating'&&ns!=='searching'?`<div class="search"><span class="mag">⌕</span><input type="search" id="nbQ" placeholder="Search gyms by name (e.g. Equinox, XSport)" value="${esc(STATE.nearbyQuery||'')}" autocomplete="off"></div>`:''}
-      <div class="foot"><span class="link" id="nbManual" style="color:var(--tint);cursor:pointer">Add a gym manually</span> · map data © OpenStreetMap contributors</div>
-    </div>
-
-    <div class="session">
-      ${next&&DB.routines[next.routine]?(()=>{ const r=DB.routines[next.routine]; const exs=r.exercises.map(e=>DB.exercises[e.ex]).filter(Boolean); const miss=g?missingFor(r,g).length:0;
-        return `<div><div class="eyebrow">Today's session${next.time?' · '+next.time:''}</div><div class="name">${esc(r.name)}</div><div class="meta">${exs.length} exercises · ~${Math.max(20,Math.round(r.exercises.reduce((a,e)=>a+e.sets*(e.rest+40),0)/60))} min${next.plan?' · '+esc(next.plan)+' wk '+next.week:''}</div></div>
-        <div class="collage">${exs.slice(0,5).map(e=>exPhoto(e,44)).join('')}${exs.length>5?`<span class="more">+${exs.length-5}</span>`:''}</div>
-        <div class="exlist">${r.exercises.slice(0,4).map(e=>`<div><span>${esc(DB.exercises[e.ex]?.name)}</span><span class="rx">${e.sets}×${e.reps}${e.weight?' @'+e.weight:''}</span></div>`).join('')}${r.exercises.length>4?`<div class="muted small">and ${r.exercises.length-4} more</div>`:''}</div>
-        ${miss?`<div class="banner" style="background:#fff4e5;color:var(--orange)">${miss} exercise${miss>1?'s need':' needs'} equipment not confirmed at ${esc(g.name)}</div>`:''}
-        <button class="big" id="startToday">Start ${esc(r.name)}</button>`; })()
-      : todays.length?`<div><div class="eyebrow">Today</div><div class="name">Done for today</div><div class="meta">${esc(DB.routines[todays[0].routine]?.name||'Workout')} logged. Nice.</div></div>`
-      : `<div><div class="eyebrow">Today</div><div class="name">Rest day</div><div class="meta">Nothing scheduled. Start any routine or plan the week.</div></div>
-        ${routines.length?`<div class="chips" style="margin:0 -18px -4px;padding:0 18px">${routines.slice(0,6).map(r=>`<button data-quick="${r.id}">${esc(r.name)}</button>`).join('')}</div>`:''}`}
-    </div>
-
-    <div class="grp"><h2>This week <span class="link" id="goSched">Schedule</span></h2>
-      <div class="weekrow">${days.map(d=>{ const dd=parseDay(d); const cls=doneDays.has(d)?'done':planDays.has(d)?'plan':''; return `<button class="d" data-day="${d}"><span>${WD[dd.getDay()][0]}</span><span class="c ${cls} ${d===t?'today':''}">${cls==='done'?'✓':dd.getDate()}</span></button>`; }).join('')}</div></div>
-
-    ${upcoming.length?`<div class="grp"><h2>Up next</h2><div class="hscroll">${upcoming.map(x=>{ const r=DB.routines[x.routine]; const d=parseDay(x.date); return `<div class="mini" data-go="${x.date}"><div class="d">${d.toLocaleDateString([], {weekday:'short',month:'short',day:'numeric'})}</div><div class="n">${esc(r?.name||'Workout')}</div><div class="m">${r?.exercises.length||0} exercises${x.time?' · '+x.time:''}</div></div>`; }).join('')}</div></div>`:''}
-
-    ${last?`<div class="grp"><h2>Last workout <span class="link" id="goHist">History</span></h2><div class="inset"><div class="cell tap" id="lastW"><div class="body"><div class="t">${esc(last.name)}</div><div class="s">${new Date(last.startedAt).toLocaleDateString([], {weekday:'short',month:'short',day:'numeric'})} · ${last.sets.length} sets · ${Math.round(vol(last)).toLocaleString()} ${DB.settings.unit}${last.gym&&DB.gyms[last.gym]?' · '+esc(DB.gyms[last.gym].name):''}</div></div><span class="chev">›</span></div></div></div>`:''}
-
-    <div class="quick"><button id="qSplit"><span class="ic">⚡</span>Build a split</button><button id="qImport"><span class="ic">⇩</span>Import a plan</button></div>`;
-  const main=document.getElementById('main');
-  v.querySelector('#heroGym').onclick=()=>{ if(g) gymSheet(g.id); else gymsSheet(); };
-  v.querySelector('#heroSwitch')?.addEventListener('click',e=>{ e.stopPropagation(); gymsSheet(); });
-  v.querySelector('#nbRefresh')?.addEventListener('click',()=>findNearby());
-  v.querySelector('#nbFind')?.addEventListener('click',()=>findNearby());
-  v.querySelector('#nbManual')?.addEventListener('click',()=>addGymSheet(()=>render()));
-  const nq=v.querySelector('#nbQ'); if(nq) nq.onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); nq.blur(); findNearby(nq.value.trim()); } };
-  v.querySelectorAll('[data-nb]').forEach(el=>el.onclick=()=>adoptNearby(nb[+el.dataset.nb]));
-  v.querySelector('#startToday')?.addEventListener('click',()=>{ if(g) beginWorkout(next.routine,next.id,g.id); else startWorkout(next.routine,next.id); });
-  v.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>startWorkout(b.dataset.quick));
-  v.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{ STATE.tab='schedule'; STATE.selDay=b.dataset.day; STATE.weekAnchor=b.dataset.day; render(); });
-  v.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ STATE.tab='schedule'; STATE.selDay=b.dataset.go; STATE.weekAnchor=b.dataset.go; render(); });
-  v.querySelector('#goSched').onclick=()=>{ STATE.tab='schedule'; render(); };
-  v.querySelector('#goHist')?.addEventListener('click',()=>{ STATE.tab='history'; render(); });
-  v.querySelector('#lastW')?.addEventListener('click',()=>workoutSheet(last.id));
-  v.querySelector('#qSplit').onclick=splitSheet; v.querySelector('#qImport').onclick=importSheet;
+    <div class="hubbar"><button class="loc" id="hubGym"><span>${g?esc(g.name):'Choose a gym'}</span><i>▾</i></button><span class="sp"></span>
+      <button class="ib" id="hubNear" aria-label="Nearby gyms"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button>
+      <button class="ib" id="hubSettings" aria-label="Settings"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></button></div>
+    <div class="search"><span class="mag">⌕</span><input type="search" id="hubQ" placeholder="Search exercises" autocomplete="off"></div>
+    <div><div class="carousel" id="caro">${slides.join('')}</div><div class="dots" id="dots">${slides.map((_,i)=>`<i class="${i===0?'on':''}"></i>`).join('')}</div></div>
+    <div class="grp"><h2>Featured</h2><div class="feat">
+      <div class="ftile" data-go="exercises" style="--tbg:#f1dfe6"><div class="pic">${pic('Bench Press (Barbell)')}</div><div class="lbl">Exercises<small>${Object.keys(DB.exercises).length} with photos</small></div></div>
+      <div class="ftile" data-go="routines" style="--tbg:#e3ead6"><div class="pic">${pic('Pull Up')}</div><div class="lbl">Routines<small>${routines.length} saved</small></div></div>
+      <div class="ftile" data-go="schedule" style="--tbg:#2b3330;--tfg:#fff"><div class="pic">${pic('Romanian Deadlift (Barbell)')}</div><div class="lbl">Schedule<small>${DB.scheduled.filter(x=>x.date>=t&&!x.done).length} upcoming</small></div></div>
+      <div class="ftile" data-go="trends" style="--tbg:#e9e2d6"><div class="pic">${pic('Overhead Press (Barbell)')}</div><div class="lbl">Progress<small>${ws.length} workouts</small></div></div>
+    </div></div>
+    <div class="grp"><h2>Others</h2><div class="others">
+      <div class="otile" data-act="gyms" style="--tbg:#e6eef4"><div class="box">📍</div><div class="n">Gyms<small>${Object.keys(DB.gyms).length} saved</small></div></div>
+      <div class="otile" data-act="split" style="--tbg:#f1dfe6"><div class="box">⚡</div><div class="n">Build a split<small>templates</small></div></div>
+      <div class="otile" data-act="import" style="--tbg:#e3ead6"><div class="box">⇩</div><div class="n">Import plan<small>CSV / paste</small></div></div>
+      <div class="otile" data-act="scan" style="--tbg:#e9e2d6"><div class="box">📷</div><div class="n">Scan gear<small>brand · kg/lb</small></div></div>
+      <div class="otile" data-act="cal" style="--tbg:#ece4f0"><div class="box">📅</div><div class="n">Calendar<small>export .ics</small></div></div>
+      <div class="otile" data-act="history" style="--tbg:#e6eef4"><div class="box">🕒</div><div class="n">History<small>${ws.length} logged</small></div></div>
+    </div></div>`;
+  const go=(tab)=>{ STATE.tab=tab; STATE._enter=true; document.getElementById('main').scrollTop=0; render(); };
+  v.querySelector('#hubGym').onclick=gymsSheet; v.querySelector('#hubNear').onclick=()=>{ nearbySheet(); }; v.querySelector('#hubSettings').onclick=()=>go('settings');
+  const q=v.querySelector('#hubQ'); q.onkeydown=e=>{ if(e.key==='Enter'){ STATE.q=q.value.trim(); STATE.grp='all'; STATE.equip='all'; go('exercises'); } }; q.onsearch=()=>{ if(q.value.trim()){ STATE.q=q.value.trim(); go('exercises'); } };
+  v.querySelectorAll('[data-go]').forEach(el=>el.onclick=()=>go(el.dataset.go));
+  const acts={ startToday:()=>{ if(g) beginWorkout(next.routine,next.id,g.id); else startWorkout(next.routine,next.id); }, quick:quickStart, gym:()=>{ if(g) gymSheet(g.id); else nearbySheet(); }, trends:()=>go('trends'),
+    gyms:gymsSheet, split:splitSheet, import:importSheet, scan:()=>scanSheet({gymId:g?.id}), cal:()=>{ const up=DB.scheduled.filter(x=>x.date>=t&&!x.done); if(up.length) icsSheet(up); else toast('Nothing scheduled yet'); }, history:()=>go('history') };
+  v.querySelectorAll('[data-act]').forEach(el=>el.onclick=e=>{ e.stopPropagation(); acts[el.dataset.act]?.(); });
+  const caro=v.querySelector('#caro'), dots=v.querySelectorAll('#dots i');
+  caro.addEventListener('scroll',()=>{ const i=Math.round(caro.scrollLeft/caro.clientWidth); dots.forEach((d,k)=>d.classList.toggle('on',k===i)); },{passive:true});
+}
+/** Nearby gyms as a sheet (moved off the home page). */
+function nearbySheet(){
+  const nb=STATE.nearby||[]; const ns=STATE.nearbyState;
+  openSheet('Gyms Near You', `<div id="nbBody"></div>`, h=>{
+    const body=h.querySelector('#nbBody');
+    const draw=()=>{ const nb=STATE.nearby||[]; const ns=STATE.nearbyState;
+      body.innerHTML=`<div class="grp"><div class="inset">
+        ${ns==='ok'&&nb.length?nb.map((n,i)=>{ const known=Object.values(DB.gyms).find(x=>x.osm===n.osm||norm(x.name)===norm(n.name)); return `<div class="cell tap" data-nb="${i}"><div class="ico-g">📍</div><div class="body"><div class="t">${esc(n.name)}</div><div class="s">${fmtKm(n.km)} · ${esc(n.chain||n.address||'Gym')}${known?' · yours':''}</div></div><span class="chev">›</span></div>`; }).join('')
+        : ns==='locating'?'<div class="empty">Getting your location…</div>' : ns==='searching'?'<div class="empty">Searching the map within 2.5 miles…</div>'
+        : ns==='denied'?'<div class="empty">Location was declined. Allow it in iPhone Settings → Privacy → Location Services → Safari.</div>'
+        : ns==='empty'?'<div class="empty">No gyms mapped nearby. Search by name or add yours.</div>' : ns==='error'?'<div class="empty">The map service didn’t answer. Try again or search by name.</div>'
+        : '<div class="empty">Find gyms around you from OpenStreetMap.</div>'}
+        ${ns!=='locating'&&ns!=='searching'?`<div class="cell tap btn-cell" id="nbFind">${ns==='ok'?'Refresh':'Use my location'}</div>`:''}</div></div>
+        <div class="search"><span class="mag">⌕</span><input type="search" id="nbQ" placeholder="Search by name (e.g. Equinox)" value="${esc(STATE.nearbyQuery||'')}" autocomplete="off"></div>
+        <div class="grp"><div class="inset"><div class="cell tap btn-cell" id="nbManual">＋ Add a Gym Manually</div></div><div class="foot">Map data © OpenStreetMap contributors.</div></div>`;
+      body.querySelectorAll('[data-nb]').forEach(el=>el.onclick=()=>{ adoptNearby(STATE.nearby[+el.dataset.nb]); closeSheet(); });
+      body.querySelector('#nbFind')?.addEventListener('click',()=>findNearby().then(draw));
+      body.querySelector('#nbManual').onclick=()=>addGymSheet(()=>render());
+      const nq=body.querySelector('#nbQ'); nq.onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); nq.blur(); findNearby(nq.value.trim()).then(draw); } };
+    };
+    draw(); STATE._nbDraw=draw;
+  }, {cancel:'Done'});
 }
 
 // ---------- Exercises ----------
