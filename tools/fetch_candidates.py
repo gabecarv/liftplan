@@ -4,10 +4,12 @@ import json, os, re, sys, urllib.parse, urllib.request, time
 API = "https://commons.wikimedia.org/w/api.php"
 UA = {"User-Agent": "LiftPlan-vintage-fetch/1.0 (github.com/gabecarv/liftplan)"}
 TERMS = {
-  "lift":  ["Sandow barbell", "Eugen Sandow dumbbell photograph", "Louis Cyr", "George Hackenschmidt", "globe barbell", "Siegmund Klein", "weightlifter 1936 Olympics", "Hermann Goerner", "Launceston Elliot", "weight lifting Bain News Service", "strongman Harris Ewing"],
-  "desk":  ["man reading at desk lamp Harris Ewing", "desk writing Bain News Service", "clerk desk 1920s photograph", "calendar wall office 1930s photograph", "student desk books 1920s photograph", "man writing letter 1920s photograph", "accountant ledger photograph 1930s", "appointment desk diary photograph"],
+  "lift80": ["weightlifting 1980s", "bodybuilding 1980s", "weight room 1980s", "bench press 1985", "Marines weight lifting 1980s", "Air Force fitness center 1980s", "Navy weight room 1980s", "Nautilus machine 1980s", "powerlifting 1980s", "Olympic weightlifting 1984", "weightlifting 1988 Olympics", "Soldiers lifting weights 1980s"],
+  "gym80":  ["gym 1980s", "fitness center 1980s", "aerobics 1980s", "health club 1980s", "jazzercise", "gymnasium 1985 photograph", "exercise class 1980s"],
+  "desk80": ["office 1980s photograph", "computer office 1980s", "desk 1985 photograph", "appointment calendar 1980s", "Filofax", "typewriter office 1980s", "planner desk 1980s"],
+  "run80":  ["jogging 1980s", "running 1980s photograph", "track athlete 1980s", "stopwatch 1980s", "marathon 1980s photograph"],
 }
-OK_LICENSE = re.compile(r"public domain|cc0|pd-", re.I)
+OK_LICENSE = re.compile(r"public domain|cc0|pd-|^cc by( \d\.\d)?$|cc-by(-\d\.\d)?$", re.I)
 def api(params):
     params.update({"format": "json"}); url = API + "?" + urllib.parse.urlencode(params)
     for attempt in range(6):
@@ -18,7 +20,7 @@ def api(params):
             if e.code == 429: time.sleep(8 * (attempt + 1)); continue
             raise
     raise RuntimeError("rate limited")
-def search(term, n=10):
+def search(term, n=14):
     j = api({"action": "query", "list": "search", "srsearch": term + " filetype:bitmap", "srnamespace": 6, "srlimit": n})
     return [h["title"] for h in j.get("query", {}).get("search", [])]
 def info(titles):
