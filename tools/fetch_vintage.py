@@ -14,6 +14,6 @@ for key,v in m.items():
             tmp=out+".tmp"; open(tmp,"wb").write(data)
             im=Image.open(tmp).convert("RGB"); im.thumbnail((1200,1200)); im.save(out,"JPEG",quality=78,optimize=True); os.remove(tmp); ok+=1; break
         except Exception as e:
-            print("retry",key,e); time.sleep(6*(attempt+1))
-    time.sleep(1.2)
+            print("retry",key,e); time.sleep(15*(attempt+1))
+    time.sleep(2.5)
 print("vintage images:",ok,"/",len([k for k in m if not k.startswith('_')]))
