@@ -4,16 +4,22 @@ import json, os, re, sys, urllib.parse, urllib.request, time
 API = "https://commons.wikimedia.org/w/api.php"
 UA = {"User-Agent": "LiftPlan-vintage-fetch/1.0 (github.com/gabecarv/liftplan)"}
 TERMS = {
-  "strongman": ["strongman barbell photograph", "weightlifter barbell 1920s", "weightlifting 1930s photograph", "Sandow dumbbell", "physical culture barbell", "Muscle Beach 1940s", "weightlifting 1950s photograph", "Apollon Louis Uni barbell", "Siegmund Klein", "Arthur Saxon"],
-  "gym":       ["gymnasium interior 1920s", "gymnasium 1910 photograph", "YMCA gymnasium 1930s", "weightlifting gym 1940s", "Turnhalle 1920", "gymnasium Indian clubs photograph", "Hippodrome gymnasium", "boxing gym 1930s photograph"],
-  "study":     ["man writing at desk 1920s photograph", "office desk 1930s photograph", "appointment book 1920s", "student studying library 1930s photograph", "typewriter desk 1920s photograph", "ledger bookkeeper 1920s photograph"],
-  "progress":  ["stopwatch 1930s photograph", "athlete measuring 1920s", "scale weighing 1930s photograph", "track athlete 1920s photograph", "chart graph 1930s photograph"],
+  "strongman": ["strongman barbell", "weightlifter 1920s", "weightlifting 1930s", "Sandow dumbbell", "Arthur Saxon", "Muscle Beach"],
+  "gym":       ["gymnasium interior 1920s", "YMCA gymnasium", "weightlifting gym 1940s", "gymnasium Indian clubs"],
+  "study":     ["man writing desk 1920s", "office desk 1930s photograph", "student library 1930s", "typewriter 1920s photograph"],
+  "progress":  ["stopwatch photograph 1930s", "track athlete 1920s", "weighing scale 1930s photograph"],
 }
 OK_LICENSE = re.compile(r"public domain|cc0|pd-", re.I)
 def api(params):
     params.update({"format": "json"}); url = API + "?" + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=60) as r: return json.load(r)
+    for attempt in range(6):
+        try:
+            req = urllib.request.Request(url, headers=UA)
+            with urllib.request.urlopen(req, timeout=60) as r: time.sleep(1.5); return json.load(r)
+        except urllib.error.HTTPError as e:
+            if e.code == 429: time.sleep(8 * (attempt + 1)); continue
+            raise
+    raise RuntimeError("rate limited")
 def search(term, n=12):
     j = api({"action": "query", "list": "search", "srsearch": term + " filetype:bitmap", "srnamespace": 6, "srlimit": n})
     return [h["title"] for h in j.get("query", {}).get("search", [])]
@@ -48,7 +54,7 @@ def main():
                     req = urllib.request.Request(it["thumb"], headers=UA)
                     with urllib.request.urlopen(req, timeout=60) as r, open(path, "wb") as f: f.write(r.read())
                 except Exception as e: print("dl fail", it["title"], e); continue
-                it.update({"group": group, "term": t, "path": path}); manifest.append(it); time.sleep(0.3)
+                it.update({"group": group, "term": t, "path": path}); manifest.append(it); time.sleep(1.0)
         print(group, len([m for m in manifest if m["group"] == group]))
     json.dump(manifest, open(f"{root}/manifest.json", "w"), indent=1)
 if __name__ == "__main__": main()
