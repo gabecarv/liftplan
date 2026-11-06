@@ -18,6 +18,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Fetch curated vintage photos (public domain, Wikimedia Commons)
+        run: pip install -q pillow && python tools/fetch_vintage.py
       - uses: actions/configure-pages@v5
         with:
           enablement: true
